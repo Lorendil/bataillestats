@@ -91,6 +91,7 @@ class Jeudecartestats(object):
 
     def melange(self, deck1, deck2, deck3, deck4):
         """Fonction permettant de mélanger plusieurs decks"""
+        return
 
 
     def bataillesimple(self, joueur1 = "", joueur2 = "", joueur3 = "", joueur4 = ""):
