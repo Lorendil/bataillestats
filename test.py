@@ -1,14 +1,13 @@
 import random
+joueurs = ["Quentin", "Nicolas", "Romain", "Olivier", "Pascale"]
+paquet = [5,8,6,3,2,1,4,5,6,9,8,7,6,3,25]
 
-g = [9,8,6]
-d = [2,6,7,8]
-f = [9,5,6,25,5,4,5,5258,4]
-print(f)
-random.shuffle(f)
-print(f)
+def bataillesimple(listejoueurs):
+    """Fonction permettant d'initialiser une bataille simple de 2 à n joueurs."""
+    joueur = {}
+    for n in listejoueurs:
+        random.shuffle(paquet)
+        joueur[n] = paquet
+    return joueur
 
-li = [g,d,f]
-print(li)
-li = random.shuffle(li)
-print(li)
-
+print(bataillesimple(joueurs))

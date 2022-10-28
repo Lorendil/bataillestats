@@ -16,7 +16,9 @@ class Cartestats(object):
         self.agilite = agilite
         self.intelligence = intelligence
         self.vitesse = vitesse
-        self.affiche = [nom, rarete, attaque, defense, agilite, intelligence, vitesse]
+
+    def __str__(self):
+        return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
 
     def __gt__(self, other, statistique):
         """Définition des règles de grandeur"""
@@ -94,23 +96,31 @@ class Jeudecartestats(object):
         return
 
 
-    def bataillesimple(self, joueur1 = "", joueur2 = "", joueur3 = "", joueur4 = ""):
-        """Fonction permettant d'initialiser une bataille simple de 2 à 4 joueurs. joueur1 = '', joueur2 = '', etc..."""
-        joueurs = {}
-        print(self.paquet)
-        if joueur1 != "":
+    def bataillesimple(self):
+        """Fonction permettant d'initialiser une bataille simple à partir de 2 joueurs"""
+        joueur = {}
+        listejoueurs = []
+        repeat = True
+        while repeat:
+            try :
+                newjoueur = str(input("Entrez le nom d'un nouveau joueur, laisser vide pour arrêter\n"))
+            except:
+                print("Ce n'est pas valide")
+                
+            if newjoueur != "":
+                listejoueurs.append(newjoueur)
+            elif len(listejoueurs) > 2:
+                repeat = False
+            else:
+                print("Il faut au moins 2 joueurs\n")
+
+        for n in listejoueurs:
             random.shuffle(self.paquet)
-            joueurs[joueur1] = self.paquet
-        if joueur2 != "":
-            random.shuffle(self.paquet)
-            joueurs[joueur2] = self.paquet
-        if joueur3 != "":
-            random.shuffle(self.paquet)
-            joueurs[joueur3] = self.paquet
-        if joueur4 != "":
-            random.shuffle(self.paquet)
-            joueurs[joueur4] = self.paquet
-        print(joueurs)
+            joueur[n] = self.paquet
+        print(joueur)
+        return joueur
+
+
 
 
 def importtsv():
@@ -128,24 +138,26 @@ def importtsv():
             if row[1] == "Commun" :
                 newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
                 commun.append(newcarte)
-                listepaquetdecarte.append(newcarte.affiche)
+                listepaquetdecarte.append(newcarte)
             elif row[1] == "Peu Commun":
                 newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
                 peucommun.append(newcarte)
-                listepaquetdecarte.append(newcarte.affiche)
+                listepaquetdecarte.append(newcarte)
             elif row[1] == "Rare":
                 newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
                 rare.append(newcarte)
-                listepaquetdecarte.append(newcarte.affiche)
+                listepaquetdecarte.append(newcarte)
             elif row[1] == "Unique":
                 newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
                 unique.append(newcarte)
-                listepaquetdecarte.append(newcarte.affiche)
+                listepaquetdecarte.append(newcarte)
             else:
                 continue
     
     #On ajoute les listes de cartes dans leur dico respectifs et on retourne 
     paquetdecarte["Commun"], paquetdecarte["Peu Commun"], paquetdecarte["Rare"], paquetdecarte["Unique"] = commun, peucommun, rare, unique
+    print(paquetdecarte["Commun"][0])
+    print(paquetdecarte)
     return listepaquetdecarte
 
 
@@ -192,4 +204,4 @@ def importxlsx():
 
 # if __name__ == __main__:
 partie = Jeudecartestats()
-partie.bataillesimple("Moi", "Lui")
+partie.bataillesimple()
