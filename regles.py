@@ -20,6 +20,9 @@ class Cartestats(object):
     def __str__(self):
         return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
 
+    def __repr__(self):
+        return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
+
     def __gt__(self, other, statistique):
         """Définition des règles de grandeur"""
         if statistique == "attaque":
