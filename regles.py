@@ -91,9 +91,12 @@ class Jeudecartestats(object):
         paquet = importtsv()
         self.paquet = paquet
 
-    def melange(self, deck1, deck2, deck3, deck4):
+    def melange(self, joueur):
         """Fonction permettant de mélanger plusieurs decks"""
-        return
+        for n in joueur:
+            random.shuffle(joueur[n])
+            
+        return joueur
 
 
     def bataillesimple(self):
