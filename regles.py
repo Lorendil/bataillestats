@@ -1,8 +1,5 @@
 #Dans ce script j'initialise une classe pour créer des cartes et leur règles, c'est vraiment inutile, je pourrais tout gérer avec juste un dictionnaire et une liste, je cherche à manipuler au mieux les classes
 
-import openpyxl
-from openpyxl import load_workbook
-from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 import random
 import csv
 
@@ -127,8 +124,6 @@ class Jeudecartestats(object):
         return joueur
 
 
-
-
 def importtsv():
     """Fonction permettant d'extraire les données des jeux vers des fichiers. Retourne un dictionnaire avec la liste de carte pour chaque rareté."""
     #On declare les différents types de cartes pouvant être appelées
@@ -159,50 +154,6 @@ def importtsv():
                 listepaquetdecarte.append(newcarte)
             else:
                 continue
-    
-    #On ajoute les listes de cartes dans leur dico respectifs et on retourne 
-    paquetdecarte["Commun"], paquetdecarte["Peu Commun"], paquetdecarte["Rare"], paquetdecarte["Unique"] = commun, peucommun, rare, unique
-    print(paquetdecarte["Commun"][0])
-    print(paquetdecarte)
-    return listepaquetdecarte
-
-
-
-def importxlsx():
-    """Fonction permettant d'extraire les données des jeux vers des fichiers. Retourne un dictionnaire avec la liste de carte pour chaque rareté."""
-    #On declare les différents types de cartes pouvant être appelées
-    unique = []
-    rare = []
-    peucommun = []
-    commun = []
-    paquetdecarte = {}
-    listepaquetdecarte = []
-
-    #On ouvre le fichier excel (google sheets) pour trier les données à l'intérieur et les ranger où l'on souhaite
-    tableur = load_workbook(filename = "listedescartes.xlsx")
-    onglet = tableur.active
-    reader = onglet.iter_rows(min_row = 1, max_row= 100, min_col=1, max_col=7)
-
-    #Et on va pouvoir trier les lignes
-    for row in reader:
-        if row[1].value == "Commun" :
-            newcarte = Cartestats(row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value)
-            commun.append(newcarte)
-            listepaquetdecarte.append(newcarte.affiche)
-        elif row[1].value == "Peu Commun":
-            newcarte = Cartestats(row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value)
-            peucommun.append(newcarte)
-            listepaquetdecarte.append(newcarte.affiche)
-        elif row[1].value == "Rare":
-            newcarte = Cartestats(row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value)
-            rare.append(newcarte)
-            listepaquetdecarte.append(newcarte.affiche)
-        elif row[1].value == "Unique":
-            newcarte = Cartestats(row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value)
-            unique.append(newcarte)
-            listepaquetdecarte.append(newcarte.affiche)
-        else:
-            continue
     
     #On ajoute les listes de cartes dans leur dico respectifs et on retourne 
     paquetdecarte["Commun"], paquetdecarte["Peu Commun"], paquetdecarte["Rare"], paquetdecarte["Unique"] = commun, peucommun, rare, unique
