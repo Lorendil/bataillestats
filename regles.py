@@ -72,15 +72,9 @@ class Jeudecartestats(object):
         paquet = importtsv()
         self.paquet = paquet
 
-    def melange(self, n):
-        """Fonction permettant de mélanger plusieurs decks"""
-        c = 0
-        while c != n:
-            random.shuffle(self.paquet)
-            c = c + 1
-            print(n)
-            print(c)
-            
+    def melange(self):
+        """Fonction permettant de mélanger un deck"""
+        random.shuffle(self.paquet)
         return self.paquet
 
 
@@ -106,9 +100,8 @@ class Jeudecartestats(object):
                 print("Il faut au moins 2 joueurs\n")
 
         for n in listejoueurs:
-            j += 1
-            joueur[n] = self.melange(j)
-        print(joueur)
+            joueur[n] = self.melange()
+            print(joueur[n][0])
         return joueur
 
 
