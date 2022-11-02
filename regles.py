@@ -15,88 +15,73 @@ class Cartestats(object):
         self.vitesse = vitesse
 
     def __str__(self):
+        """On indique ce que l'on veut voir apparaître en cas de print"""
         return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
 
     def __repr__(self):
+        """On indique ce que l'on veut voir apparaître en cas de print avec conditions"""
         return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
 
-    def __gt__(self, other, statistique):
-        """Définition des règles de grandeur"""
+    def compare(self, other, statistique):
+        """Compare deux cartes selon la statistique donnée, retourne la carte supérieure, en cas d'égalité retourne 'False'."""
         if statistique == "attaque":
             if self.attaque > other.attaque:
-                return True
-            else:
+                return self
+            elif self.attaque == other.attaque:
                 return False
+            else:
+                return other
 
         if statistique == "defense":
             if self.defense > other.defense:
-                return True
-            else:
+                return self
+            elif self.defense == other.defense:
                 return False
+            else:
+                return other
 
         if statistique == "agilite":
             if self.agilite > other.agilite:
-                return True
+                return self
+            elif self.agilite == other.agilite:
+                return False
             else:
-                return False       
+                return other       
 
         if statistique == "intelligence":
             if self.intelligence > other.intelligence:
-                return True
+                return self
+            elif self.intelligence == other.intelligence:
+                return False
             else:
-                return False 
+                return other 
 
         if statistique == "vitesse":
             if self.vitesse > other.vitesse:
-                return True
-            else:
+                return self
+            elif self.vitesse == other.vitesse:
                 return False
-
-    def __ge__(self, other, statistique):
-        """Permet de régir les égalités"""
-
-        if statistique == "attaque":
-            if self.attaque == other.attaque:
-                return True
             else:
-                return False
+                return other
 
-        if statistique == "defense":
-            if self.defense == other.defense:
-                return True
-            else:
-                return False
-
-        if statistique == "agilite":
-            if self.agilite == other.agilite:
-                return True
-            else:
-                return False       
-
-        if statistique == "intelligence":
-            if self.intelligence == other.intelligence:
-                return True
-            else:
-                return False 
-
-        if statistique == "vitesse":
-            if self.vitesse == other.vitesse:
-                return True
-            else:
-                return False
 
 class Jeudecartestats(object):
     """Classe permettant de jouer à différents modes de jeux à l'aide d'un paquet de carte"""
     def __init__(self):
+        """On importe le fichier contenant l'ensemble des cartes"""
         paquet = importtsv()
         self.paquet = paquet
 
-    def melange(self, joueur):
+    def melange(self, n):
         """Fonction permettant de mélanger plusieurs decks"""
-        for n in joueur:
-            random.shuffle(joueur[n])
+        c = 0
+        while c != n:
+            random.shuffle(self.paquet)
+            c = c + 1
+            print(n)
+            print(c)
             
-        return joueur
+        return self.paquet
 
 
     def bataillesimple(self):
@@ -104,22 +89,25 @@ class Jeudecartestats(object):
         joueur = {}
         listejoueurs = []
         repeat = True
+        j = 0
+        #On deamnde à l'utilisateur de rentrer le nom des joueurs qui souhaitent jouer
         while repeat:
             try :
                 newjoueur = str(input("Entrez le nom d'un nouveau joueur, laisser vide pour arrêter\n"))
             except:
                 print("Ce n'est pas valide")
-                
+
+            #On ajoute le nouveau joueur à la liste si l'utilisateur ne renvoie pas rien et on vérifie qu'il y a bien au moins 2 joueurs
             if newjoueur != "":
                 listejoueurs.append(newjoueur)
-            elif len(listejoueurs) > 2:
+            elif len(listejoueurs) >= 2:
                 repeat = False
             else:
                 print("Il faut au moins 2 joueurs\n")
 
         for n in listejoueurs:
-            random.shuffle(self.paquet)
-            joueur[n] = self.paquet
+            j += 1
+            joueur[n] = self.melange(j)
         print(joueur)
         return joueur
 
@@ -133,7 +121,7 @@ def importtsv():
     commun = []
     paquetdecarte = {}
     listepaquetdecarte = []
-    with open("listedescartes.tsv", newline='', encoding="utf-8") as f:
+    with open("listedescartes.csv", newline='', encoding="utf-8") as f:
         reader = csv.reader(f, delimiter = '\t', lineterminator="\n")
         for row in reader:
             if row[1] == "Commun" :
