@@ -16,11 +16,20 @@ class Cartestats(object):
 
     def __str__(self):
         """On indique ce que l'on veut voir apparaître en cas de print"""
-        return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
+        return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}"
+                .format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
 
     def __repr__(self):
         """On indique ce que l'on veut voir apparaître en cas de print avec conditions"""
-        return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}".format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
+        return ("Nom: {}, Rareté: {}, Attaque: {}, Defense: {}, Agilité: {}, Intelligence: {}, Vitesse: {}"
+                .format(self.nom, self.rarete, self.attaque, self.defense, self.agilite, self.intelligence, self.vitesse))
+    
+    def __ge__(self, other):
+        """On indique que deux cartes sont identiques si elles portent le même nom"""
+        if self.nom == other.nom:
+            return True
+        else:
+            return False
 
     def compare(self, other, statistique):
         """Compare deux cartes selon la statistique donnée, retourne la carte supérieure, en cas d'égalité retourne 'False'."""
@@ -78,31 +87,54 @@ class Jeudecartestats(object):
         return self.paquet
 
 
-    def bataillesimple(self):
+    def preparation(self):
         """Fonction permettant d'initialiser une bataille simple à partir de 2 joueurs"""
-        joueur = {}
+
         listejoueurs = []
         repeat = True
-        j = 0
-        #On deamnde à l'utilisateur de rentrer le nom des joueurs qui souhaitent jouer
+        #On demande à l'utilisateur de rentrer le nom des joueurs qui souhaitent jouer
         while repeat:
+            joueur = {}
             try :
                 newjoueur = str(input("Entrez le nom d'un nouveau joueur, laisser vide pour arrêter\n"))
             except:
                 print("Ce n'est pas valide")
 
-            #On ajoute le nouveau joueur à la liste si l'utilisateur ne renvoie pas rien et on vérifie qu'il y a bien au moins 2 joueurs
+            #On ajoute le nouveau joueur à la liste et son deck si l'utilisateur ne renvoie pas rien et on vérifie qu'il y a bien au moins 2 joueurs
             if newjoueur != "":
-                listejoueurs.append(newjoueur)
+                joueur["nomjoueur"] = newjoueur
+                joueur["cartes"] = self.melange()
+                listejoueurs.append(joueur)
             elif len(listejoueurs) >= 2:
                 repeat = False
             else:
                 print("Il faut au moins 2 joueurs\n")
+        print(listejoueurs)
+        return listejoueurs
 
-        for n in listejoueurs:
-            joueur[n] = self.melange()
-            print(joueur[n][0])
-        return joueur
+    def courseauscore(self, x):
+        """Jeu où il faut remporter le plus de cartes en x tours"""
+        listedesjoueurs = self.preparation()
+        tour = 0
+        while tour < x:
+            verif = False
+            while verif == False:
+                choixstats = str(input("{}, voici votre carte :\n {} \n Indiquez quelle statistique jouer ('attaque', 'defense', 'agilite', 'intelligence', 'vitesse')."
+                                        .format(listedesjoueurs[0]["nomjoueur"], listedesjoueurs[0]["cartes"][tour])))
+                if choixstats != "attaque" and choixstats != "defense" and choixstats != "agilite" and choixstats != "intelligence" and choixstats != "vitesse":
+                    print(choixstats)
+                    print("Nous n'avons pas compris votre réponse. \n")
+                else:
+                    verif = True
+            for n in range(len(listedesjoueurs)):
+                if n != 0:
+
+                    result = listedesjoueurs[0]["cartes"][tour].compare(listedesjoueurs[n]["cartes"][tour], choixstats)
+                    print(listedesjoueurs[0]["cartes"][tour])
+                    print(listedesjoueurs[n]["cartes"][tour])
+                    print(result)
+
+            tour += 1
 
 
 def importtsv():
@@ -142,4 +174,4 @@ def importtsv():
 
 # if __name__ == __main__:
 partie = Jeudecartestats()
-partie.bataillesimple()
+partie.courseauscore(6)
