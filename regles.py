@@ -116,6 +116,7 @@ class Jeudecartestats(object):
         """Jeu où il faut remporter le plus de cartes en x tours"""
         listedesjoueurs = self.preparation()
         tour = 0
+        score = 0
         while tour < x:
             verif = False
             while verif == False:
@@ -123,7 +124,7 @@ class Jeudecartestats(object):
                                         .format(listedesjoueurs[0]["nomjoueur"], listedesjoueurs[0]["cartes"][tour])))
                 if choixstats != "attaque" and choixstats != "defense" and choixstats != "agilite" and choixstats != "intelligence" and choixstats != "vitesse":
                     print(choixstats)
-                    print("Nous n'avons pas compris votre réponse. \n")
+                    print("\nNous n'avons pas compris votre réponse. \n")
                 else:
                     verif = True
             for n in range(len(listedesjoueurs)):
@@ -133,8 +134,15 @@ class Jeudecartestats(object):
                     print(listedesjoueurs[0]["cartes"][tour])
                     print(listedesjoueurs[n]["cartes"][tour])
                     print(result)
+                    if result == listedesjoueurs[0]["cartes"][tour]:
+                        score += 10
+                    elif result == False:
+                        score += 1
+                    else:
+                        continue
 
             tour += 1
+            print("{}, vous avez un score de {} points".format(listedesjoueurs[0]["nomjoueur"], score))
 
 
 def importtsv():
@@ -174,4 +182,4 @@ def importtsv():
 
 # if __name__ == __main__:
 partie = Jeudecartestats()
-partie.courseauscore(6)
+partie.courseauscore(3)
