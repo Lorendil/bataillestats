@@ -1,4 +1,3 @@
-#Dans ce script j'initialise une classe pour créer des cartes et leur règles, c'est vraiment inutile, je pourrais tout gérer avec juste un dictionnaire et une liste, je cherche à manipuler au mieux les classes
 
 import random
 import csv
@@ -155,7 +154,7 @@ class Jeudecartestats(object):
                     if result == True:
                         score += 10
                     elif result == "Egal":
-                        score += 1
+                        score += 5
                     else:
                         continue
             
@@ -178,19 +177,19 @@ def importtsv():
         reader = csv.reader(f, delimiter = '\t', lineterminator="\n")
         for row in reader:
             if row[1] == "Commun" :
-                newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                newcarte = Cartestats(row[0], row[1], int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
                 commun.append(newcarte)
                 listepaquetdecarte.append(newcarte)
             elif row[1] == "Peu Commun":
-                newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                newcarte = Cartestats(row[0], row[1], int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
                 peucommun.append(newcarte)
                 listepaquetdecarte.append(newcarte)
             elif row[1] == "Rare":
-                newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                newcarte = Cartestats(row[0], row[1], int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
                 rare.append(newcarte)
                 listepaquetdecarte.append(newcarte)
             elif row[1] == "Unique":
-                newcarte = Cartestats(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                newcarte = Cartestats(row[0], row[1], int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
                 unique.append(newcarte)
                 listepaquetdecarte.append(newcarte)
             else:
@@ -202,4 +201,4 @@ def importtsv():
 
 # if __name__ == __main__:
 partie = Jeudecartestats()
-partie.courseauscore(3)
+partie.courseauscore(5)
