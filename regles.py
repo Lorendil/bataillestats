@@ -1,6 +1,12 @@
-
+from enum import Enum
 import random
 import csv
+
+class Comparaison(Enum):
+    """Permet de traiter les égalités, supérieurs et inférieurs dans les comparaisons"""
+    INFERIEUR = 0
+    EGAL = 1
+    SUPERIEUR = 2
 
 class Cartestats(object):
     """Classe permettant de créer des cartes personnalisées"""
@@ -31,46 +37,46 @@ class Cartestats(object):
             return False
 
     def compare(self, other, statistique):
-        """Compare deux cartes selon la statistique donnée, retourne la carte supérieure, en cas d'égalité retourne 'False'."""
+        """Compare deux cartes selon la statistique donnée, retourne "True" si la carte est supérieure, "False" si inférieure, "Egal" si égale"""
         if statistique == "attaque":
             if self.attaque > other.attaque:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.attaque == other.attaque:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False
+                return Comparaison.INFERIEUR
 
         if statistique == "defense":
             if self.defense > other.defense:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.defense == other.defense:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False
+                return Comparaison.INFERIEUR
 
         if statistique == "agilite":
             if self.agilite > other.agilite:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.agilite == other.agilite:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False       
+                return Comparaison.INFERIEUR       
 
         if statistique == "intelligence":
             if self.intelligence > other.intelligence:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.intelligence == other.intelligence:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False 
+                return Comparaison.INFERIEUR 
 
         if statistique == "vitesse":
             if self.vitesse > other.vitesse:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.vitesse == other.vitesse:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False
+                return Comparaison.INFERIEUR
 
 class Joueur(object):
     """Classe permettant de définir un joueur et son jeu"""
@@ -165,10 +171,10 @@ class Jeudecartestats(object):
                 if n != 0:
                     # print(listedesjoueurs[0]["cartes"][tour], (listedesjoueurs[n]["cartes"][tour]), choixstats)
                     result = listedesjoueurs[0].deck[tour].compare(listedesjoueurs[n].deck[tour], choixstats)
-                    print("Le resultat de la comparaison est: {}".format(result))
-                    if result == True:
+                    print("Le resultat de la comparaison est: {}".format(result.name))
+                    if result == Comparaison.SUPERIEUR:
                         score += 10
-                    elif result == "Egal":
+                    elif result == Comparaison.EGAL:
                         score += 5
                     else:
                         continue
@@ -214,6 +220,6 @@ def importtsv():
     paquetdecarte["Commun"], paquetdecarte["Peu Commun"], paquetdecarte["Rare"], paquetdecarte["Unique"] = commun, peucommun, rare, unique
     return listepaquetdecarte
 
-# if __name__ == __main__:
+
 partie = Jeudecartestats()
 partie.courseauscore(5)
