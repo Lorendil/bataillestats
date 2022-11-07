@@ -10,6 +10,8 @@ class Comparaison(Enum):
 
 class Cartestats(object):
     """Classe permettant de créer des cartes personnalisées"""
+    #On définit les statistiques, elles peuvent être aisément modifiées en cas de choix de jeu différent, exemple sur des personnalité, taille, âge, poids, etc... 
+    # il faudrait modifier le programme en conséquence pour qu'il soit réutilisable (WIP)
     def __init__(self, nom, rarete, attaque, defense, agilite, intelligence, vitesse):
         self.nom = nom
         self.rarete = rarete
@@ -31,13 +33,15 @@ class Cartestats(object):
     
     def __ge__(self, other):
         """On indique que deux cartes sont identiques si elles portent le même nom"""
+        #Dans certains cas de figures, la fonction permettra de vérifier par exemple is une carte est déjà présente dans le deck ou un autre deck
         if self.nom == other.nom:
             return True
         else:
             return False
 
     def compare(self, other, statistique):
-        """Compare deux cartes selon la statistique donnée, retourne "True" si la carte est supérieure, "False" si inférieure, "Egal" si égale"""
+        """Compare deux cartes selon la statistique donnée, retourne une valeur définie dans Comparaison(Enum) selon le résultat supérieur, inférieur ou égal"""
+        #On ecrit la règle pour chacune des possibilités, supérieur, égal et sinon, inférieur, le retour est géré par Comparaison, un énumerateur
         if statistique == "attaque":
             if self.attaque > other.attaque:
                 return Comparaison.SUPERIEUR
@@ -93,7 +97,6 @@ class Joueur(object):
         """Permet de retirer une carte au deck, attention, retire une fois la carte"""
         self.deck.remove(carte)
 
-
     def melange(self):
         """Permet de mélanger le deck du joueur"""
         random.shuffle(self.deck)
@@ -113,12 +116,11 @@ class Jeudecartestats(object):
                 deck.append(self.paquet[(random.randrange(1, len(self.paquet)))])
         return deck
 
-
     def melange(self):
         """Fonction permettant de mélanger un deck"""
+        #Fonction qui sera probablement amené à disparaitre avec l'apparition de la classe Joueur, avant de transférer les méthodes, on va rédiger le cahier des charges
         random.shuffle(self.paquet)
         return self.paquet
-
 
     def preparation(self, jeu):
         """Fonction permettant d'initialiser une bataille simple à partir de 2 joueurs"""
@@ -190,7 +192,7 @@ class Jeudecartestats(object):
 
 def importtsv():
     """Fonction permettant d'extraire les données des jeux vers des fichiers. Retourne un dictionnaire avec la liste de carte pour chaque rareté."""
-    #On declare les différents types de cartes pouvant être appelées
+    #On declare les différents types de cartes pouvant être appelées pour qu'elles soient triées d'une manière à être facilement tirées lors de la création d'un deck en rareté aléatoire
     unique = []
     rare = []
     peucommun = []
@@ -219,7 +221,7 @@ def importtsv():
             else:
                 continue
     
-    #On ajoute les listes de cartes dans leur dico respectifs et on retourne 
+    #On ajoute les listes de cartes dans leur dico respectifs et on le retourne 
     paquetdecarte["Commun"], paquetdecarte["Peu Commun"], paquetdecarte["Rare"], paquetdecarte["Unique"] = commun, peucommun, rare, unique
     return listepaquetdecarte
 
