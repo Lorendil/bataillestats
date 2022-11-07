@@ -118,7 +118,7 @@ class Jeudecartestats(object):
             repeat = True
             #On demande à l'utilisateur de rentrer le nom des joueurs qui souhaitent jouer
             while repeat:
-                joueur = {}
+                joueur = Joueur()
                 try :
                     newjoueur = str(input("Entrez le nom d'un nouveau joueur, laisser vide pour arrêter\n"))
                 except:
@@ -126,8 +126,7 @@ class Jeudecartestats(object):
 
                 #On ajoute le nouveau joueur à la liste et son deck si l'utilisateur ne renvoie pas rien et on vérifie qu'il y a bien au moins 2 joueurs
                 if newjoueur != "":
-                    joueur["nomjoueur"] = newjoueur
-                    joueur["cartes"] = self.createdeck(jeu)
+                    joueur = Joueur(nom = newjoueur, deck = self.createdeck(jeu))
                     listejoueurs.append(joueur)
                 elif len(listejoueurs) >= 2:
                     repeat = False
@@ -150,7 +149,7 @@ class Jeudecartestats(object):
             #verif permet de vérifier que l'utilisateur a bien renseigné un choix possible, tant que la vérification n'est pas faite, on lui demande de faire un choix
             while verif == False:
                 choixstats = str(input("\n{}, voici votre carte :\n {} \n Indiquez quelle statistique jouer ('attaque', 'defense', 'agilite', 'intelligence', 'vitesse')."
-                                        .format(listedesjoueurs[0]["nomjoueur"], listedesjoueurs[0]["cartes"][tour])))
+                                        .format(listedesjoueurs[0].nom, listedesjoueurs[0].deck[tour])))
                 
                 #Si on ne reconnait pas la réponse, la vérification reste False, sinon elle passe en True 
                 if choixstats != "attaque" and choixstats != "defense" and choixstats != "agilite" and choixstats != "intelligence" and choixstats != "vitesse":
@@ -161,11 +160,11 @@ class Jeudecartestats(object):
 
             #On va comparer la carte du joueur avec les cartes de tous les autres joueurs
             for n in range(len(listedesjoueurs)):
-                print("\nCarte de {}: {}".format(listedesjoueurs[n]["nomjoueur"],listedesjoueurs[n]["cartes"][tour]))
+                print("\nCarte de {}: {}".format(listedesjoueurs[n].nom,listedesjoueurs[n].deck[tour]))
 
                 if n != 0:
                     # print(listedesjoueurs[0]["cartes"][tour], (listedesjoueurs[n]["cartes"][tour]), choixstats)
-                    result = listedesjoueurs[0]["cartes"][tour].compare(listedesjoueurs[n]["cartes"][tour], choixstats)
+                    result = listedesjoueurs[0].deck[tour].compare(listedesjoueurs[n].deck[tour], choixstats)
                     print("Le resultat de la comparaison est: {}".format(result))
                     if result == True:
                         score += 10
@@ -177,7 +176,7 @@ class Jeudecartestats(object):
 
             tour += 1
             if x == tour:
-                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(listedesjoueurs[0]["nomjoueur"], score, scoremax, score/scoremax*100))
+                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(listedesjoueurs[0].nom, score, scoremax, score/scoremax*100))
 
 
 def importtsv():
