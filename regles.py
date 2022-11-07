@@ -85,11 +85,14 @@ class Joueur(object):
         self.deck = deck
         self.nom = nom
     
-    def addcarte(self):
+    def addcarte(self, carte):
         """Permet d'ajouter une carte au deck"""
+        self.deck.append(carte)
 
-    def removecard(self):
-        """Permet de retirer une carte au deck"""
+    def removecard(self, carte):
+        """Permet de retirer une carte au deck, attention, retire une fois la carte"""
+        self.deck.remove(carte)
+
 
     def melange(self):
         """Permet de mélanger le deck du joueur"""
