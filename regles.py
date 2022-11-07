@@ -72,6 +72,22 @@ class Cartestats(object):
             else:
                 return False
 
+class Joueur(object):
+    """Classe permettant de définir un joueur et son jeu"""
+    def __init__(self, nom = "", deck = []):
+        """Permet d'initialiser la classe joueur à l'aide d'un nom et d'un deck de cartes"""
+        self.deck = deck
+        self.nom = nom
+    
+    def addcarte(self):
+        """Permet d'ajouter une carte au deck"""
+
+    def removecard(self):
+        """Permet de retirer une carte au deck"""
+
+    def melange(self):
+        """Permet de mélanger le deck du joueur"""
+        random.shuffle(self.deck)
 
 class Jeudecartestats(object):
     """Classe permettant de jouer à différents modes de jeux à l'aide d'un paquet de carte"""

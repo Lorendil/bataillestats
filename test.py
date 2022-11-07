@@ -1,3 +1,3 @@
-liste = [1,2,3,4,5,6,5,4,2]
-for n in range(len(liste)):
-    print(n)
+liste = ["element0", "element1", "element2"]
+del liste[1]
+print(liste)
