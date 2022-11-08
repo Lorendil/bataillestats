@@ -1,9 +1,17 @@
-
+from enum import Enum
 import random
 import csv
 
+class Comparaison(Enum):
+    """Permet de traiter les égalités, supérieurs et inférieurs dans les comparaisons"""
+    INFERIEUR = 0
+    EGAL = 1
+    SUPERIEUR = 2
+
 class Cartestats(object):
     """Classe permettant de créer des cartes personnalisées"""
+    #On définit les statistiques, elles peuvent être aisément modifiées en cas de choix de jeu différent, exemple sur des personnalité, taille, âge, poids, etc... 
+    # il faudrait modifier le programme en conséquence pour qu'il soit réutilisable (WIP)
     def __init__(self, nom, rarete, attaque, defense, agilite, intelligence, vitesse):
         self.nom = nom
         self.rarete = rarete
@@ -25,52 +33,54 @@ class Cartestats(object):
     
     def __ge__(self, other):
         """On indique que deux cartes sont identiques si elles portent le même nom"""
+        #Dans certains cas de figures, la fonction permettra de vérifier par exemple is une carte est déjà présente dans le deck ou un autre deck
         if self.nom == other.nom:
             return True
         else:
             return False
 
     def compare(self, other, statistique):
-        """Compare deux cartes selon la statistique donnée, retourne la carte supérieure, en cas d'égalité retourne 'False'."""
+        """Compare deux cartes selon la statistique donnée, retourne une valeur définie dans Comparaison(Enum) selon le résultat supérieur, inférieur ou égal"""
+        #On ecrit la règle pour chacune des possibilités, supérieur, égal et sinon, inférieur, le retour est géré par Comparaison, un énumerateur
         if statistique == "attaque":
             if self.attaque > other.attaque:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.attaque == other.attaque:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False
+                return Comparaison.INFERIEUR
 
         if statistique == "defense":
             if self.defense > other.defense:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.defense == other.defense:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False
+                return Comparaison.INFERIEUR
 
         if statistique == "agilite":
             if self.agilite > other.agilite:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.agilite == other.agilite:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False       
+                return Comparaison.INFERIEUR       
 
         if statistique == "intelligence":
             if self.intelligence > other.intelligence:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.intelligence == other.intelligence:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False 
+                return Comparaison.INFERIEUR 
 
         if statistique == "vitesse":
             if self.vitesse > other.vitesse:
-                return True
+                return Comparaison.SUPERIEUR
             elif self.vitesse == other.vitesse:
-                return "Egal"
+                return Comparaison.EGAL
             else:
-                return False
+                return Comparaison.INFERIEUR
 
 class Joueur(object):
     """Classe permettant de définir un joueur et son jeu"""
@@ -79,11 +89,13 @@ class Joueur(object):
         self.deck = deck
         self.nom = nom
     
-    def addcarte(self):
+    def addcarte(self, carte):
         """Permet d'ajouter une carte au deck"""
+        self.deck.append(carte)
 
-    def removecard(self):
-        """Permet de retirer une carte au deck"""
+    def removecard(self, carte):
+        """Permet de retirer une carte au deck, attention, retire une fois la carte"""
+        self.deck.remove(carte)
 
     def melange(self):
         """Permet de mélanger le deck du joueur"""
@@ -104,12 +116,11 @@ class Jeudecartestats(object):
                 deck.append(self.paquet[(random.randrange(1, len(self.paquet)))])
         return deck
 
-
     def melange(self):
         """Fonction permettant de mélanger un deck"""
+        #Fonction qui sera probablement amené à disparaitre avec l'apparition de la classe Joueur, avant de transférer les méthodes, on va rédiger le cahier des charges
         random.shuffle(self.paquet)
         return self.paquet
-
 
     def preparation(self, jeu):
         """Fonction permettant d'initialiser une bataille simple à partir de 2 joueurs"""
@@ -118,7 +129,7 @@ class Jeudecartestats(object):
             repeat = True
             #On demande à l'utilisateur de rentrer le nom des joueurs qui souhaitent jouer
             while repeat:
-                joueur = {}
+                joueur = Joueur()
                 try :
                     newjoueur = str(input("Entrez le nom d'un nouveau joueur, laisser vide pour arrêter\n"))
                 except:
@@ -126,8 +137,7 @@ class Jeudecartestats(object):
 
                 #On ajoute le nouveau joueur à la liste et son deck si l'utilisateur ne renvoie pas rien et on vérifie qu'il y a bien au moins 2 joueurs
                 if newjoueur != "":
-                    joueur["nomjoueur"] = newjoueur
-                    joueur["cartes"] = self.createdeck(jeu)
+                    joueur = Joueur(nom = newjoueur, deck = self.createdeck(jeu))
                     listejoueurs.append(joueur)
                 elif len(listejoueurs) >= 2:
                     repeat = False
@@ -150,7 +160,7 @@ class Jeudecartestats(object):
             #verif permet de vérifier que l'utilisateur a bien renseigné un choix possible, tant que la vérification n'est pas faite, on lui demande de faire un choix
             while verif == False:
                 choixstats = str(input("\n{}, voici votre carte :\n {} \n Indiquez quelle statistique jouer ('attaque', 'defense', 'agilite', 'intelligence', 'vitesse')."
-                                        .format(listedesjoueurs[0]["nomjoueur"], listedesjoueurs[0]["cartes"][tour])))
+                                        .format(listedesjoueurs[0].nom, listedesjoueurs[0].deck[tour])))
                 
                 #Si on ne reconnait pas la réponse, la vérification reste False, sinon elle passe en True 
                 if choixstats != "attaque" and choixstats != "defense" and choixstats != "agilite" and choixstats != "intelligence" and choixstats != "vitesse":
@@ -161,15 +171,15 @@ class Jeudecartestats(object):
 
             #On va comparer la carte du joueur avec les cartes de tous les autres joueurs
             for n in range(len(listedesjoueurs)):
-                print("\nCarte de {}: {}".format(listedesjoueurs[n]["nomjoueur"],listedesjoueurs[n]["cartes"][tour]))
+                print("\nCarte de {}: {}".format(listedesjoueurs[n].nom,listedesjoueurs[n].deck[tour]))
 
                 if n != 0:
                     # print(listedesjoueurs[0]["cartes"][tour], (listedesjoueurs[n]["cartes"][tour]), choixstats)
-                    result = listedesjoueurs[0]["cartes"][tour].compare(listedesjoueurs[n]["cartes"][tour], choixstats)
-                    print("Le resultat de la comparaison est: {}".format(result))
-                    if result == True:
+                    result = listedesjoueurs[0].deck[tour].compare(listedesjoueurs[n].deck[tour], choixstats)
+                    print("Le resultat de la comparaison est: {}".format(result.name))
+                    if result == Comparaison.SUPERIEUR:
                         score += 10
-                    elif result == "Egal":
+                    elif result == Comparaison.EGAL:
                         score += 5
                     else:
                         continue
@@ -177,12 +187,12 @@ class Jeudecartestats(object):
 
             tour += 1
             if x == tour:
-                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(listedesjoueurs[0]["nomjoueur"], score, scoremax, score/scoremax*100))
+                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(listedesjoueurs[0].nom, score, scoremax, score/scoremax*100))
 
 
 def importtsv():
     """Fonction permettant d'extraire les données des jeux vers des fichiers. Retourne un dictionnaire avec la liste de carte pour chaque rareté."""
-    #On declare les différents types de cartes pouvant être appelées
+    #On declare les différents types de cartes pouvant être appelées pour qu'elles soient triées d'une manière à être facilement tirées lors de la création d'un deck en rareté aléatoire
     unique = []
     rare = []
     peucommun = []
@@ -211,10 +221,10 @@ def importtsv():
             else:
                 continue
     
-    #On ajoute les listes de cartes dans leur dico respectifs et on retourne 
+    #On ajoute les listes de cartes dans leur dico respectifs et on le retourne 
     paquetdecarte["Commun"], paquetdecarte["Peu Commun"], paquetdecarte["Rare"], paquetdecarte["Unique"] = commun, peucommun, rare, unique
     return listepaquetdecarte
 
-# if __name__ == __main__:
+
 partie = Jeudecartestats()
 partie.courseauscore(5)
