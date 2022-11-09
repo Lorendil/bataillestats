@@ -92,10 +92,8 @@ class Joueur(object):
     def drawcard(self, cardnum = 0):
         """Permet de tirer une carte selon son numéro dans la liste, sans modification, il s'agira de la première"""
         drawncard = self.deck[cardnum]
-        #On veut placer la carte tirée à la fin du paquet, comme si après l'avoir jouée, on la mettait au fond du deck, on pourrait supprimer en fonction du numéro de l'entrée
-        #mais je pense que c'est plus réutilisable en supprimant directement l'objet carte puis l'ajoutant à la fin de la liste
+        #On veut retirer la carte du paquet quand elle est jouée, on la remettra dans le paquet si le round est gagné
         self.deck.removecard(drawncard)
-        self.deck.append(drawncard)
         return drawncard
     
     def addcarte(self, carte):
