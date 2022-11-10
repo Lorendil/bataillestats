@@ -88,6 +88,7 @@ class Joueur(object):
         """Permet d'initialiser la classe joueur à l'aide d'un nom et d'un deck de cartes"""
         self.deck = deck
         self.nom = nom
+        self.score = 0
 
     def drawcard(self, cardnum = 0):
         """Permet de tirer une carte selon son numéro dans la liste, sans modification, il s'agira de la première"""
@@ -156,7 +157,6 @@ class Jeudecartestats(object):
         """Jeu où il faut remporter le plus de cartes en x tours"""
         listedesjoueurs = self.preparation("courseauscore")
         tour = 0
-        score = 0
         scoremax = 10 * x * (len(listedesjoueurs)-1)
 
         #On initie la boucle qui ira jusqu'au nombre de tours indiqué par x
@@ -185,16 +185,18 @@ class Jeudecartestats(object):
                     result = listedesjoueurs[0].deck[tour].compare(listedesjoueurs[n].deck[tour], choixstats)
                     print("Le resultat de la comparaison est: {}".format(result.name))
                     if result == Comparaison.SUPERIEUR:
-                        score += 10
+                        listedesjoueurs[0].score += 10
                     elif result == Comparaison.EGAL:
-                        score += 5
+                        listedesjoueurs[0].score += 5
                     else:
                         continue
             
 
             tour += 1
             if x == tour:
-                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(listedesjoueurs[0].nom, score, scoremax, score/scoremax*100))
+                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(
+                    listedesjoueurs[0].nom, listedesjoueurs[0].score, scoremax, listedesjoueurs[0].score/scoremax*100
+                    ))
 
 
 def importtsv():
