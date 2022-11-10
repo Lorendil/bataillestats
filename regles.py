@@ -94,7 +94,7 @@ class Joueur(object):
         """Permet de tirer une carte selon son numéro dans la liste, sans modification, il s'agira de la première"""
         drawncard = self.deck[cardnum]
         #On veut retirer la carte du paquet quand elle est jouée, on la remettra dans le paquet si le round est gagné
-        self.deck.removecard(drawncard)
+        self.removecard(drawncard)
         return drawncard
     
     def addcarte(self, carte):
@@ -157,46 +157,87 @@ class Jeudecartestats(object):
         """Jeu où il faut remporter le plus de cartes en x tours"""
         listedesjoueurs = self.preparation("courseauscore")
         tour = 0
-        scoremax = 10 * x * (len(listedesjoueurs)-1)
+        scoremax = 10 * x
 
         #On initie la boucle qui ira jusqu'au nombre de tours indiqué par x
         while tour < x:
             verif = False
+            listecartes = []
+            scoretour = []
+            jmax = 0
+            equalstatus = False
+            equallist = []
             
+
+            #On crée la liste des cartes tirées pour le tour la carte indice [0] correspond au joueur [0] de la liste
+            for n in range(len(listedesjoueurs)):
+                listecartes.append(listedesjoueurs[n].drawcard())
+                scoretour.append(0)
 
             #verif permet de vérifier que l'utilisateur a bien renseigné un choix possible, tant que la vérification n'est pas faite, on lui demande de faire un choix
             while verif == False:
                 choixstats = str(input("\n{}, voici votre carte :\n {} \n Indiquez quelle statistique jouer ('attaque', 'defense', 'agilite', 'intelligence', 'vitesse')."
-                                        .format(listedesjoueurs[0].nom, listedesjoueurs[0].deck[tour])))
+                                        .format(listedesjoueurs[0].nom, listecartes[0])))
                 
                 #Si on ne reconnait pas la réponse, la vérification reste False, sinon elle passe en True 
                 if choixstats != "attaque" and choixstats != "defense" and choixstats != "agilite" and choixstats != "intelligence" and choixstats != "vitesse":
                     print(choixstats)
                     print("\nNous n'avons pas compris votre réponse. \n")
                 else:
+                    print("\n")
                     verif = True
 
             #On va comparer la carte du joueur avec les cartes de tous les autres joueurs
             for n in range(len(listedesjoueurs)):
-                print("\nCarte de {}: {}".format(listedesjoueurs[n].nom,listedesjoueurs[n].deck[tour]))
+                
 
                 if n != 0:
                     # print(listedesjoueurs[0]["cartes"][tour], (listedesjoueurs[n]["cartes"][tour]), choixstats)
-                    result = listedesjoueurs[0].deck[tour].compare(listedesjoueurs[n].deck[tour], choixstats)
+                    result = listecartes[jmax].compare(listecartes[n], choixstats)
+                    print("Carte de {}: {}".format(listedesjoueurs[jmax].nom, listecartes[jmax]))
+                    print("Carte de {}: {}".format(listedesjoueurs[n].nom, listecartes[n]))
                     print("Le resultat de la comparaison est: {}".format(result.name))
+
+                    #Si la carte est supérieure, on attribue au score du joueur jmax 10 uniquement s'il n'est pas en status égalité car il doit garder ses 5 points et au perdant 0
                     if result == Comparaison.SUPERIEUR:
-                        listedesjoueurs[0].score += 10
+                        if equalstatus != True:
+                            scoretour[jmax] = 10
+                        scoretour[n] = 0
+
+                    #Si la carte est égale à celle d'un joueur, on attribue aux deux joueurs le score de 5 et on signale une égalité, les joueurs en égalités sont répertoriés dans la liste
+                    #equallist, le status est un booléen passant en True
                     elif result == Comparaison.EGAL:
-                        listedesjoueurs[0].score += 5
+                        scoretour[jmax] = 5
+                        scoretour[n] = 5
+                        equalstatus = True
+                        equallist.append(jmax, n)
+
+                    #Si la carte est inférieure à ceelle d'un joueur, on attribue au joueur testé 10, le joueur testé devient jmax, le joueur jmax passe à 0
+                    #S'il y a un statut equal, on va attribuer le score de 0 à tous les joueurs et effacer les éléments référencés dans la liste equallist et on retire le statut equal
                     else:
-                        continue
-            
+                        scoretour[jmax] = 0
+                        scoretour[n] = 10
+                        jmax = n
+
+                        if equalstatus == True:
+                            for y in equallist:
+                                scoretour[y] = 0
+                            equallist.clear()
+
+                        equalstatus = False
+                        
+
+
+            for i in range(len(listedesjoueurs)):
+                listedesjoueurs[i].score += scoretour[i]
 
             tour += 1
             if x == tour:
-                print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(
-                    listedesjoueurs[0].nom, listedesjoueurs[0].score, scoremax, listedesjoueurs[0].score/scoremax*100
-                    ))
+                for x in range(len(listedesjoueurs)):
+
+                    print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(
+                        listedesjoueurs[x].nom, listedesjoueurs[x].score, scoremax, listedesjoueurs[x].score/scoremax*100
+                        ))
 
 
 def importtsv():
