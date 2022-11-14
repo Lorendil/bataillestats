@@ -184,8 +184,6 @@ class Jeudecartestats(object):
     def jeuclassique(self, x):
         """Jeu où il faut remporter toutes les cartes des adversaires, x le nombre de cartes dans la main d'un joueur"""
         listedesjoueurs = self.preparation("jeuclassique", cartemain = x)
-        tour = 0
-        scoremax = 10 * x
         equalistcards = []
         jmax = 0
 
@@ -260,7 +258,8 @@ class Jeudecartestats(object):
                         equalstatus = False
                         
 
-
+            #Si nous ne sommes pas sur une situation d'égalité, on ajoute les cartes des joueurs au deck du vainqueur, s'il y avait des cartes en égalités, elles sont ajoutées
+            # à la liste des cartes du tour et on efface le contenu de la liste des égalités
             if equalstatus == False:
                 if equalistcardsstatus:
                     for card in equalistcards:
@@ -270,24 +269,25 @@ class Jeudecartestats(object):
                 for card in listecartes:
                     listedesjoueurs[jmax].deck.append(card)
 
-                for joueur in range(len(listedesjoueurs)):
-                    if not listedesjoueurs[joueur].deck:
-                        listedesjoueurs.remove(listedesjoueurs[joueur])
-                
+                #Si un joueur ne possède plus de cartes dans son deck, il est éliminé
+                for joueurs in (listedesjoueurs):                    
+                    if len(joueurs.deck) == 0: 
+                        listedesjoueurs.remove(joueurs)
+
                 equalistcards.clear()
             
+            #En cas d'égalité, on active le statut égalité pour que le gagnant de la prochaine manche remporte toutes les cartes
             else:
                 for card in listecartes:
                     equalistcards.append(card)
                     equalistcardsstatus = True
 
-            tour += 1
-            if x == tour:
-                for x in range(len(listedesjoueurs)):
-
-                    print("{}, vous avez un score de {} points sur {} points possibles, soit {}/100 du maximum".format(
-                        listedesjoueurs[x].nom, listedesjoueurs[x].score, scoremax, listedesjoueurs[x].score/scoremax*100
-                        ))
+            #S'il y a plus d'un joueur en lice on affiche le nombre de carte des joueurs restants, sinon on félicite le vainqueur
+            if len(listedesjoueurs) > 1:
+                for joueurs in range(len(listedesjoueurs)):
+                    print("{}, vous avez {} cartes".format(listedesjoueurs[joueurs].nom, len(listedesjoueurs[joueurs].deck)))
+            else:
+                print("Bravo {} ! Vous avez remporté la partie !".format(listedesjoueurs[0].nom))
 
 
 def importtsv():
@@ -327,4 +327,4 @@ def importtsv():
 
 
 partie = Jeudecartestats()
-partie.jeuclassique(2)
+partie.jeuclassique(3)

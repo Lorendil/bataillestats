@@ -116,12 +116,18 @@ class Jeudecartestats(object):
         paquet = importtsv()
         self.paquet = paquet
 
-    def createdeck(self, jeu):
+    def createdeck(self, jeu, cartemain = 10):
         """Fonction permettant de créer les decks selon le mode de jeu choisi"""
         if jeu == "courseauscore":
             deck = []
-            while len(deck) < 10:
+            while len(deck) < cartemain:
                 deck.append(self.paquet[(random.randrange(1, len(self.paquet)))])
+
+        elif jeu == "jeuclassique":
+            deck = []
+            while len(deck) < cartemain:
+                deck.append(self.paquet[(random.randrange(1, len(self.paquet)))])
+
         return deck
 
     def melange(self):
@@ -130,7 +136,7 @@ class Jeudecartestats(object):
         random.shuffle(self.paquet)
         return self.paquet
 
-    def preparation(self, jeu):
+    def preparation(self, jeu, cartemain = 0):
         """Fonction permettant d'initialiser une bataille simple à partir de 2 joueurs"""
         if jeu == "courseauscore":
             listejoueurs = []
@@ -151,6 +157,28 @@ class Jeudecartestats(object):
                     repeat = False
                 else:
                     print("Il faut au moins 2 joueurs\n")
+        elif jeu == "jeuclassique":
+            listejoueurs = []
+            repeat = True
+            #On demande à l'utilisateur de rentrer le nom des joueurs qui souhaitent jouer
+            while repeat:
+                joueur = Joueur()
+                try :
+                    newjoueur = str(input("Entrez le nom d'un nouveau joueur, laisser vide pour arrêter\n"))
+                except:
+                    print("Ce n'est pas valide")
+
+                #On ajoute le nouveau joueur à la liste et son deck si l'utilisateur ne renvoie pas rien et on vérifie qu'il y a bien au moins 2 joueurs
+                if newjoueur != "":
+                    joueur = Joueur(nom = newjoueur, deck = self.createdeck(jeu, cartemain))
+                    listejoueurs.append(joueur)
+
+                elif len(listejoueurs) >= 2:
+                    repeat = False
+
+                else:
+                    print("Il faut au moins 2 joueurs\n")
+
         return listejoueurs
 
     def courseauscore(self, x):
@@ -240,6 +268,107 @@ class Jeudecartestats(object):
                         listedesjoueurs[x].nom, listedesjoueurs[x].score, scoremax, listedesjoueurs[x].score/scoremax*100
                         ))
 
+    def jeuclassique(self, x):
+        """Jeu où il faut remporter toutes les cartes des adversaires, x le nombre de cartes dans la main d'un joueur"""
+        listedesjoueurs = self.preparation("jeuclassique", cartemain = x)
+        equalistcards = []
+        jmax = 0
+        verif = False
+        choixstats = ""
+
+        #On initie la boucle qui ira jusqu'au nombre de tours indiqué par x
+        while len(listedesjoueurs) > 1:
+            
+            listecartes = []
+            
+            equalstatus = False
+            equalistcardsstatus = False
+            equallist = []
+
+            
+
+            #On crée la liste des cartes tirées pour le tour la carte indice [0] correspond au joueur [0] de la liste
+            for n in range(len(listedesjoueurs)):
+                listecartes.append(listedesjoueurs[n].drawcard())
+
+            #verif permet de vérifier que l'utilisateur a bien renseigné un choix possible, tant que la vérification n'est pas faite, on lui demande de faire un choix
+            while verif == False:
+                choixstats = str(input("\n{}, voici votre carte :\n {} \n Indiquez quelle statistique jouer ('attaque', 'defense', 'agilite', 'intelligence', 'vitesse')."
+                                        .format(listedesjoueurs[jmax].nom, listecartes[jmax])))
+                
+                #Si on ne reconnait pas la réponse, la vérification reste False, sinon elle passe en True 
+                if choixstats != "attaque" and choixstats != "defense" and choixstats != "agilite" and choixstats != "intelligence" and choixstats != "vitesse":
+                    print(choixstats)
+                    print("\nNous n'avons pas compris votre réponse. \n")
+                else:
+                    print("\n")
+                    verif = True
+
+            #On va comparer la carte du joueur avec les cartes de tous les autres joueurs
+            for n in range(len(listedesjoueurs)):
+                
+
+                if n != jmax:
+                    # print(listedesjoueurs[0]["cartes"][tour], (listedesjoueurs[n]["cartes"][tour]), choixstats)
+                    result = listecartes[jmax].compare(listecartes[n], choixstats)
+                    print("Carte de {}: {}".format(listedesjoueurs[jmax].nom, listecartes[jmax]))
+                    print("Carte de {}: {}".format(listedesjoueurs[n].nom, listecartes[n]))
+                    print("Le resultat de la comparaison est: {}".format(result.name))
+
+                    #Si la carte est supérieure, on attribue au score du joueur jmax 10 uniquement s'il n'est pas en status égalité car il doit garder ses 5 points et au perdant 0
+                    if result == Comparaison.SUPERIEUR:
+                        continue
+
+                    #Si la carte est égale à celle d'un joueur, on attribue aux deux joueurs le score de 5 et on signale une égalité, les joueurs en égalités sont répertoriés dans la liste
+                    #equallist, le status est un booléen passant en True
+                    elif result == Comparaison.EGAL:
+                        equalstatus = True
+                        equallist.append(jmax)
+                        equallist.append(n)
+
+                    #Si la carte est inférieure à celle d'un joueur, on attribue au joueur testé 10, le joueur testé devient jmax, le joueur jmax passe à 0
+                    #S'il y a un statut equal, on va attribuer le score de 0 à tous les joueurs et effacer les éléments référencés dans la liste equallist et on retire le statut equal
+                    else:
+                        jmax = n
+                        equalstatus = False
+                        
+
+            #Si nous ne sommes pas sur une situation d'égalité, on ajoute les cartes des joueurs au deck du vainqueur, s'il y avait des cartes en égalités, elles sont ajoutées
+            # à la liste des cartes du tour et on efface le contenu de la liste des égalités
+            if equalstatus == False:
+                verif = False
+                if equalistcardsstatus:
+                    for card in equalistcards:
+                        listecartes.append(card)
+                    equalistcardsstatus = False
+
+                for card in listecartes:
+                    listedesjoueurs[jmax].deck.append(card)
+
+                #Si un joueur ne possède plus de cartes dans son deck, il est éliminé
+                for joueurs in (listedesjoueurs):                    
+                    if len(joueurs.deck) == 0: 
+                        listedesjoueurs.remove(joueurs)
+
+                equalistcards.clear()
+            
+            #En cas d'égalité, on active le statut égalité pour que le gagnant de la prochaine manche remporte toutes les cartes
+            else:
+                verif = True
+                for card in listecartes:
+                    equalistcards.append(card)
+                    equalistcardsstatus = True
+                for joueurs in (listedesjoueurs):                    
+                    if len(joueurs.deck) == 0: 
+                        listedesjoueurs.remove(joueurs)
+
+            #S'il y a plus d'un joueur en lice on affiche le nombre de carte des joueurs restants, sinon on félicite le vainqueur
+            if len(listedesjoueurs) > 1:
+                for joueurs in range(len(listedesjoueurs)):
+                    print("{}, vous avez {} cartes".format(listedesjoueurs[joueurs].nom, len(listedesjoueurs[joueurs].deck)))
+            else:
+                print("Bravo {} ! Vous avez remporté la partie !".format(listedesjoueurs[0].nom))
+
 
 def importtsv():
     """Fonction permettant d'extraire les données des jeux vers des fichiers. Retourne un dictionnaire avec la liste de carte pour chaque rareté."""
@@ -278,4 +407,4 @@ def importtsv():
 
 
 partie = Jeudecartestats()
-partie.courseauscore(5)
+partie.jeuclassique(5)
