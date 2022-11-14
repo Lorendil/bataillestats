@@ -332,7 +332,9 @@ class Jeudecartestats(object):
                         jmax = n
                         equalstatus = False
                         
-
+            if jmax != 0:
+                listedesjoueurs[jmax], listedesjoueurs[0] = listedesjoueurs[0], listedesjoueurs[jmax]
+                jmax = 0
             #Si nous ne sommes pas sur une situation d'égalité, on ajoute les cartes des joueurs au deck du vainqueur, s'il y avait des cartes en égalités, elles sont ajoutées
             # à la liste des cartes du tour et on efface le contenu de la liste des égalités
             if equalstatus == False:
