@@ -210,9 +210,10 @@ class Jeudecartestats(object):
                         scoretour[jmax] = 5
                         scoretour[n] = 5
                         equalstatus = True
-                        equallist.append(jmax, n)
+                        equallist.append(jmax)
+                        equallist.append(n)
 
-                    #Si la carte est inférieure à ceelle d'un joueur, on attribue au joueur testé 10, le joueur testé devient jmax, le joueur jmax passe à 0
+                    #Si la carte est inférieure à celle d'un joueur, on attribue au joueur testé 10, le joueur testé devient jmax, le joueur jmax passe à 0
                     #S'il y a un statut equal, on va attribuer le score de 0 à tous les joueurs et effacer les éléments référencés dans la liste equallist et on retire le statut equal
                     else:
                         scoretour[jmax] = 0
